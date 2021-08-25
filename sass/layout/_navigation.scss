@@ -1,0 +1,166 @@
+.navigation {
+  &__checkbox {
+    display: none; //No queremos ver la checkbox
+  }
+  &__button {
+    background-color: $color-white;
+    height: 7rem;
+    width: 7rem;
+    position: fixed;
+    top: 6rem;
+    right: 6rem;
+    border-radius: 50%;
+    z-index: 2000;
+    box-shadow: 0 1rem 3rem rgba($color-black, 0.1);
+    text-align: center; //Para centrar las 3 barras o spans
+    cursor: pointer;
+
+    @include respond(tab-port) {
+      top: 3rem;
+      right: 3rem;
+    }
+  }
+  &__background {
+    height: 6rem; //Circulo
+    width: 6rem; //Circulo
+    border-radius: 50%; //Circulo
+    position: fixed; // parecido al absolute pero con fixed no cambia de posicion al hacer scroll en la pagina, pero tambien saca el elemento del flow y nos permite especificar una relacion relativa a un elemento con el top, left, right and bottom properties
+    top: 6.5rem;
+    right: 6.5rem;
+    //Aqui vamos a usar un nuevo gradient, hasta ahora hemos usado el linear gradient, ahora veremos el radiar gradient, la diferencia es que el linear va de un lado del elemento al otro mientras que el radial empieza en el centro del elemento expandiendose en todas las direcciones.
+    background-image: radial-gradient(
+      $color-primary-light,
+      $color-primary-dark
+    );
+    z-index: 1000; //Le damos un valor muy alto para asegurarnos que siempre estara por encima del resto de capas!
+    transition: transform 0.8s cubic-bezier(0.83, 0, 0.17, 1);
+
+    @include respond(tab-port) {
+      top: 3.5rem;
+      right: 3.5rem;
+    }
+    @include respond(phone) {
+      top: 3.2rem;
+      right: 3.2rem;
+    }
+  }
+
+  &__nav {
+    height: 100vh; //Todo el view port
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1500;
+    opacity: 0;
+    width: 0;
+    //Creamos nuestro propio estilo, hemos usado hasta ahora las built in timing function como ease-in, ease-out o ease-in-out , pero podemos utilizar funciones custom, para ello usamos lo que se conoce como cubic-bezier, normalmente hay que meter cuatro valores los cuales no tenemos ni idea, para ello podemos usar: https://easings.net/
+    transition: all 0.8s cubic-bezier(0.68, -0.6, 0.32, 1.6);
+    animation: fixNavAnim 1s; //link al keyframes: to avoid that the nav appears after refresh????
+  }
+  &__list {
+    @include centerElement; //Mixin
+    list-style: none;
+    text-align: center;
+    counter-reset: section; // CSS counters to enumerate the list
+  }
+  &__item {
+    margin: 1rem;
+  }
+  &__link {
+    &::before {
+      counter-increment: section;
+      content: "0" counters(section, "."); //content has access to the variable section which has the value for the current item
+      margin-right: 1rem;
+    }
+    &:link,
+    &:visited {
+      //Normal state
+      display: inline-block; //De esta forma podemos aplicar el padding y tambien los efectos
+      font-size: 3rem;
+      font-weight: 300;
+      padding: 1rem 2rem;
+      color: $color-white;
+      text-decoration: none;
+      text-transform: uppercase;
+      background-image: linear-gradient(
+        120deg,
+        transparent 0%,
+        transparent 50%,
+        $color-white 50%
+      );
+      background-size: 230%; //Desplazamos el background hacia la derecha
+      transition: all 0.4s;
+
+      /*
+      span {
+        // Aqui no asignamos una clase porque seria demasiado pero deberiamos hacerlo...
+        margin-right: 1.5rem;
+        display: inline-block;
+      }
+      */
+    }
+    &:hover,
+    &:active {
+      background-position: 100%; //Hacemos mover el background
+      color: $color-primary;
+      transform: translateX(1rem);
+    }
+  }
+  //FUNCTIONALITY
+  //Checkbox Hack: Con esto activamos el background de color verde
+  &__checkbox:checked ~ &__background {
+    transform: scale(80);
+  }
+  &__checkbox:checked ~ &__nav {
+    opacity: 1;
+    width: 100%;
+  }
+
+  //ICON
+  &__icon {
+    position: relative;
+    margin-top: 3.3rem;
+
+    &,
+    &::before,
+    &::after {
+      display: inline-block;
+      width: 3.5rem;
+      height: 2.5px;
+      background-color: $color-grey-dark-v3;
+    }
+    &::before,
+    &::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      transition: all 0.2s;
+    }
+    &::before {
+      top: -0.8rem;
+    }
+    &::after {
+      top: 0.8rem;
+    }
+  }
+
+  &__buton:hover &__icon::before {
+    top: -1.2rem;
+  }
+  &__buton:hover &__icon::after {
+    top: 1.2rem;
+  }
+
+  &__checkbox:checked + &__button &__icon {
+    background-color: transparent;
+  }
+  &__checkbox:checked + &__button &__icon::before {
+    top: 0;
+    transform: rotate(135deg);
+  }
+  &__checkbox:checked + &__button &__icon::after {
+    top: 0;
+    transform: rotate(-135deg);
+  }
+}
